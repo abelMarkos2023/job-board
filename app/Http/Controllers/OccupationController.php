@@ -12,18 +12,10 @@ class OccupationController extends Controller
      */
     public function index()
     {
-        $jobs = Occupation::query();
 
-        $jobs = $jobs->when(request('search'), function ($query) {
-            $query->where(function ($q) {
-                $q->where('title', 'LIKE', '%' . request('search') . '%')
-                  ->orWhere('description', 'LIKE', '%' . request('search') . '%');
-            });
-        })->when(request('min_salary'), function ($query) {
-            $query->where('salary', '>=', request('min_salary'));
-        })->when(request('max_salary'), function ($query) {
-            $query->where('salary', '<=', request('max_salary'));
-        })->latest()->get();
+        $filters = request()->only(['search', 'category', 'type', 'min_salary', 'max_salary', 'experience']);
+        $jobs = Occupation::filter($filters)->latest()->get();
+
 
         return view('jobs.index', compact('jobs'));
     }

@@ -5,33 +5,57 @@
     <!-- 4. THE HIGH-PERFORMANCE FEATURE BENTO GRID -->
     <x-featured />
     <form action="{{ route('jobs.index') }}" method="get"
-        class="border border-slate-200 dark:border-slate-700 p-3 rounded-lg shadow-xl">
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div>
-                <div class="mb-2 font-semibold">Search</div>
-                <x-text-input name="search" value="{{ request('search') }}" placeholder="Type to search"
-                    :hasIcon="true" />
-            </div>
-            <div>
-                <div class="mb-2 font-semibold">Salary</div>
-                <div class="flex gap-2 justify-between items-center">
-                    <div class="flex gap-2 items-center">
-                        <div class="mb-2 font-semibold"> from</div>
-                        <x-text-input name="min_salary" value="{{ request('min_salary') }}" placeholder="Type to search"
+        class="bg-[#090d16]/40 backdrop-blur-md rounded-2xl border border-slate-800/80 p-6 shadow-2xl space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Column 1: Search & Salary -->
+            <div class="space-y-4">
+                <div>
+                    <label
+                        class="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold mb-2 block">Keywords</label>
+                    <x-text-input name="search" value="{{ request('search') }}" placeholder="Title, skills, keywords..."
+                        :hasIcon="true" />
+                </div>
+                <div>
+                    <label
+                        class="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold mb-2 block">Salary
+                        Range</label>
+                    <div class="flex items-center gap-3">
+                        <x-text-input name="min_salary" value="{{ request('min_salary') }}" placeholder="Min"
                             :hasIcon="false" />
-                    </div>
-                    <div class="flex gap-2 items-center">
-                        <div> to</div>
-                        <x-text-input name="max_salary" value="{{ request('max_salary') }}" placeholder="Type to search"
+                        <span class="text-slate-600 font-mono text-xs">to</span>
+                        <x-text-input name="max_salary" value="{{ request('max_salary') }}" placeholder="Max"
                             :hasIcon="false" />
                     </div>
                 </div>
-
             </div>
-            <div></div>
-            <div></div>
+
+            <!-- Column 2: Job Type & Experience -->
+            <div class="space-y-6">
+                <x-radio-group name="type" :options="\App\Models\Occupation::$types" />
+                <x-radio-group name="experience" :options="\App\Models\Occupation::$experiences" />
+            </div>
+
+            <!-- Column 3: Category -->
+            <div>
+                <x-radio-group name="category" :options="\App\Models\Occupation::$categories" />
+            </div>
+
         </div>
-        <button class="px-4 py-2 bg-indigo-500 text-white rounded-lg w-full" type="submit">Filter</button>
+
+        <!-- Action Panel -->
+        <div class="flex items-center gap-3 pt-4 border-t border-slate-800/60">
+            <button type="submit"
+                class="flex-1 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl transition duration-150 shadow-lg shadow-indigo-600/10 active:scale-[0.99] text-center">
+                Apply Filter Engine
+            </button>
+            @if(request('search') || request('min_salary') || request('max_salary') || request('type') || request('experience') || request('category'))
+                <a href="{{ route('jobs.index') }}"
+                    class="px-6 py-3 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200 text-sm font-semibold rounded-xl transition duration-150 text-center">
+                    Clear Filters
+                </a>
+            @endif
+        </div>
     </form>
     @forelse ($jobs as $job)
         <x-job-card :job="$job" />
